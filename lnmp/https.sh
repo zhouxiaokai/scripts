@@ -7,37 +7,37 @@ create_server_key_check(){
         echo "no openssl install, install openssl firstly"
         exit 1
     }
-    [ x$0 == x ] && {
+    [ x$1 == x ] && {
         echo "no target directory for server.key, pls provide target directory"
         exit 1 
     }
 }
 
 create_server_key(){
-   [ -f $0/server.key ] && return 
+   [ -f $1/server.key ] && return 
    echo "创建服务器私钥，命令会让你输入一个口令"
-   openssl genrsa -des3 -out $0/server.key 1024   
+   openssl genrsa -des3 -out $1/server.key 1024   
 }
 
 create_server_csr(){
-   [ -f $0/server.csr ] && return 
+   [ -f $1/server.csr ] && return 
    echo "创建签名请求的证书（CSR）"
-   openssl req -new -key $0/server.key -out $0/server.csr   
+   openssl req -new -key $1/server.key -out $1/server.csr   
 }
 
 create_server_key_org()
 {
-   [ -f $0/server.key.org ] && return 
+   [ -f $1/server.key.org ] && return 
    echo "加载SSL支持的Nginx并使用上述私钥时除去必须的口令"
-   cp $0/server.key $0/server.key.org
-   openssl rsa -in $0/server.key.org -out $0/server.key
+   cp $1/server.key $1/server.key.org
+   openssl rsa -in $1/server.key.org -out $1/server.key
 }
 
 create_server_crt()
 {
-    [ -f $0/server.crt ] && return 
+    [ -f $1/server.crt ] && return 
     echo "标记证书使用上述私钥和CSR："
-    openssl x509 -req -days 365 -in  $0/server.csr -signkey  $0/server.key -out  $0/server.crt
+    openssl x509 -req -days 365 -in  $1/server.csr -signkey  $1/server.key -out  $1/server.crt
 }
 
 gen_nginx_443_conf(){
@@ -68,7 +68,7 @@ server {
      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
      proxy_pass http://IP地址/ssl/;
     }
-}" > $0/vhost/443.conf
+}" > $1/vhost/443.conf
 
 }
 
