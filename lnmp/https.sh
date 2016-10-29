@@ -48,7 +48,6 @@ echo '
 server {
     listen       443;
     server_name  120.27.138.55;
-
     ssl                  on;
     ssl_certificate      /etc/nginx/server.crt;
     ssl_certificate_key  /etc/nginx/server.key;
@@ -62,6 +61,7 @@ server {
     location / {
      root   /home/wwwroot/www;
      index  testssl.html index.html index.htm index.php;
+     include enable-php.conf;
      proxy_redirect off;
      proxy_set_header Host $host;
      proxy_set_header X-Real-IP $remote_addr;
