@@ -40,37 +40,6 @@ create_server_crt()
     openssl x509 -req -days 365 -in  $1/server.csr -signkey  $1/server.key -out  $1/server.crt
 }
 
-gen_nginx_443_conf(){
-echo '
-#
-# HTTPS server configuration
-#
-server {
-    listen       443;
-    server_name  120.27.138.55;
-    ssl                  on;
-    ssl_certificate      /etc/nginx/server.crt;
-    ssl_certificate_key  /etc/nginx/server.key;
-
-    ssl_session_timeout  5m;
-
-#    ssl_protocols  SSLv2 SSLv3 TLSv1;
-#    ssl_ciphers  ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP;
-#    ssl_prefer_server_ciphers   on;
-
-    location / {
-     root   /home/wwwroot/www;
-     index  testssl.html index.html index.htm index.php;
-     include enable-php.conf;
-     proxy_redirect off;
-     proxy_set_header Host $host;
-     proxy_set_header X-Real-IP $remote_addr;
-     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-     proxy_pass http://120.27.138.55//ssl/;
-    }
-}' > $1/vhost/443.conf
-
-}
 
 case $1 in
 
@@ -80,12 +49,7 @@ ca)  create_server_key_check $2
      create_server_key_org $2
      create_server_crt $2
     ;;
-conf)[ x$2 == x ] && {
-         echo "https.sh conf  [nginx conf path]"
-         exit 1
-     }
-     gen_nginx_443_conf $2;;
-     
+
 test)
      nginx -t || exit 1
      echo "nginx configure ok"
