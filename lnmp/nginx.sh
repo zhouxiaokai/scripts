@@ -10,7 +10,7 @@ help(){
 help_server()
 {
    echo "$0  server"
-   echo "  [port]  [ -r root ] [ -i index ]"
+   echo "  [port]  [ -r root ] [ -i index ]  path "
    exit 1
 }
 
@@ -55,8 +55,11 @@ generate_server_http(){
 
 generate_server(){
    echo " $@"
+   [ $# -lt 3 ] && {
+   
+   }
    case $2 in 
-       443) generate_server_https;;
+       443) generate_server_https $3;;
        *)   generate_server_http;;
    esac
 }
