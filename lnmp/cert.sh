@@ -40,14 +40,25 @@ create_server_crt()
     openssl x509 -req -days 365 -in  $1/server.csr -signkey  $1/server.key -out  $1/server.crt
 }
 
+help_ca()
+{
+  [ $# -gt 1 ] && return 
+   echo "$0 ca [target path for server key certification]"
+   exit 1
+}
+
+
 
 case $1 in
 
-ca)  create_server_key_check $2
-     create_server_key $2
-     create_server_csr $2
-     create_server_key_org $2
-     create_server_crt $2
+ca)  help_ca
+     path=$2
+     [ -d $2 ] || mkdir -p $2
+     create_server_key_check $path
+     create_server_key $path
+     create_server_csr $path
+     create_server_key_org $path
+     create_server_crt $path
     ;;
 
 test)
