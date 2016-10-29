@@ -1,6 +1,6 @@
 #!/bin/sh
 
-[ $# -lt 2 ] && echo " http.sh  [target dir]"
+[ $# -lt 2 ] && echo " http.sh [ca|conf|test|deploy] [target dir]"
 
 create_server_key_check(){
     which openssl >/dev/null || {
