@@ -18,6 +18,7 @@ help_server()
 generate_server_https()
 {
  echo "https"
+ [ -d $1/vhost ] || mkdir -p $1/vhost
  echo '
 #
 # HTTPS server configuration
