@@ -110,7 +110,7 @@ generate_server(){
    port=$3
    path=$4   
   echo "path=$path port=$port"
-   case $2 in 
+   case $port in 
        443) generate_server_https $path $port $host;;
        *)   echo "test $@i";
             generate_server_http  $path $port $host ;
