@@ -47,7 +47,7 @@ echo "
 #
 server {
     listen       443;
-    server_name  本机的IP地址;
+    server_name  120.27.138.55;
 
     ssl                  on;
     ssl_certificate      /etc/nginx/server.crt;
@@ -60,13 +60,13 @@ server {
 #    ssl_prefer_server_ciphers   on;
 
     location / {
-        #root   html;
-        #index  testssl.html index.html index.htm;
+     root   /home/wwwroot/www;
+     index  testssl.html index.html index.htm index.php;
      proxy_redirect off;
      proxy_set_header Host $host;
      proxy_set_header X-Real-IP $remote_addr;
      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-     proxy_pass http://IP地址/ssl/;
+     proxy_pass http://120.27.138.55//ssl/;
     }
 }" > $1/vhost/443.conf
 
