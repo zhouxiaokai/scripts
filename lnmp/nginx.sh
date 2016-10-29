@@ -55,9 +55,7 @@ generate_server_http(){
 
 generate_server(){
    echo " $@"
-   [ $# -lt 3 ] && {
-   
-   }
+   [ $# -lt 3 ] &&  help_server
    case $2 in 
        443) generate_server_https $3;;
        *)   generate_server_http;;
