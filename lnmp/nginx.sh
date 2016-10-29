@@ -63,7 +63,7 @@ generate_server_http(){
         index index.html index.htm index.php;
         root  /home/wwwroot/admin;
         #error_page   404   /404.html;
-        include enable-php.conf; "  >> $conf
+        include enable-php.conf; "  > $conf
   echo  'location /nginx_status
         {
             stub_status on;
