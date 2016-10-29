@@ -51,6 +51,49 @@ server {
 
 generate_server_http(){
   echo "http"
+  [ -d $1/vhost ] || mkdir -p $1/vhost
+  var conf=$1/vhost/$2.conf
+  echo ' server
+    {'  >  $conf
+  echo "  listen 80 default_server;
+        #listen [::]:80 default_server ipv6only=on;
+        server_name www.lnmp.org;
+        index index.html index.htm index.php;
+        root  /home/wwwroot/admin;
+        #error_page   404   /404.html;
+        include enable-php.conf; "  >> $conf
+  echo  'location /nginx_status
+        {
+            stub_status on;
+            access_log   off;
+        }
+
+        location ~ .*\.(gif|jpg|jpeg|png|bmp|swf)$
+        {
+            expires      30d;
+        }
+
+        location ~ .*\.(js|css)?$
+        {
+            expires      12h;
+        }
+
+        location ~ /\.
+        {
+            deny all;
+        }
+
+location ~ /services/.*$ {
+        if ($server_port ~ "^80$"){
+            set $rule_0 1$rule_0;
+        }
+        if ($rule_0 = "1"){
+            rewrite /(.*) https://120.27.138.55/$1 permanent;                       break;
+        }
+    }
+
+        access_log  /home/wwwlogs/access.log  access;
+    }' > $conf
 }
 
 
@@ -59,7 +102,7 @@ generate_server(){
    [ $# -lt 3 ] &&  help_server
    case $2 in 
        443) generate_server_https $3;;
-       *)   generate_server_http;;
+       *)   generate_server_http  $3 $2 ;;
    esac
 }
 
@@ -73,7 +116,7 @@ server) [ $# -lt 2 ] && help_server
        generate_server $@
     ;;
 http) echo "generate for http"
-       generate_http
+       generate_http $@
     ;;
 *) help ;;
 esac
