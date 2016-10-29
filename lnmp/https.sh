@@ -92,7 +92,6 @@ test)
      /etc/init.d/nginx restart || exit 1
      netstat -lan | grep 443 && echo "nginx https is running ok"
     ;;
-deploy))
-
+deploy) echo "do nothing"
 ;;
 esac
