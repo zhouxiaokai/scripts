@@ -49,7 +49,7 @@ server {
      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
      #proxy_pass http://hostip/ssl/;
     }
-}' > $1/vhost/443.conf
+}' >> $1/vhost/443.conf
 }
 
 generate_server_http(){
