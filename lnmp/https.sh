@@ -41,7 +41,7 @@ create_server_crt()
 }
 
 gen_nginx_443_conf(){
-echo "
+echo '
 #
 # HTTPS server configuration
 #
@@ -68,7 +68,7 @@ server {
      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
      proxy_pass http://120.27.138.55//ssl/;
     }
-}" > $1/vhost/443.conf
+}' > $1/vhost/443.conf
 
 }
 
