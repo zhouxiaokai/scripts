@@ -2,7 +2,7 @@
 
 help(){
   echo $0
-  echo "	[server] [host] [port]  [opts]"
+  echo "	[server] [host] [port] [conf root path]  [opts]"
   echo "	[http]  [opts]"
   exit 1
 }
@@ -10,7 +10,7 @@ help(){
 help_server()
 {
    echo "$0  server"
-   echo " [host] [port]  [ -r root ] [ -i index ]  path "
+   echo " [host] [port] [conf root path]  [ -r root ] [ -i index ]   "
    exit 1
 }
 
@@ -106,9 +106,9 @@ location ~ /services/.*$ {
 generate_server(){
    echo " $@"
    [ $# -lt 3 ] &&  help_server
-   port=$2
-   path=$3
-   host=$4
+   host=$2
+   port=$3
+   path=$4   
   echo "path=$path port=$port"
    case $2 in 
        443) generate_server_https $path $port $host;;
