@@ -50,13 +50,12 @@ server {
 }
 
 generate_server_http(){
-  echo "http"
   [ -d $1/vhost ] || mkdir -p $1/vhost
-  var conf=$1/vhost/$2.conf
-  echo ' server
+  conf=$1/vhost/$2.conf
+ 
+ echo ' server
     {'  >  $conf
-  echo "  listen 80 default_server;
-        #listen [::]:80 default_server ipv6only=on;
+  echo "  listen $2 default_server;
         server_name www.lnmp.org;
         index index.html index.htm index.php;
         root  /home/wwwroot/admin;
@@ -84,7 +83,9 @@ generate_server_http(){
         }
 
 location ~ /services/.*$ {
-        if ($server_port ~ "^80$"){
+        if ($server_port ~ ' >> $conf
+ echo -e  "\"^$2\c" >> $conf
+ echo '$"){
             set $rule_0 1$rule_0;
         }
         if ($rule_0 = "1"){
@@ -93,30 +94,33 @@ location ~ /services/.*$ {
     }
 
         access_log  /home/wwwlogs/access.log  access;
-    }' > $conf
+    }' >> $conf
 }
 
 
 generate_server(){
    echo " $@"
    [ $# -lt 3 ] &&  help_server
+   port=$2
+   path=$3
+  echo "path=$path port=$port"
    case $2 in 
-       443) generate_server_https $3;;
-       *)   generate_server_http  $3 $2 ;;
+       443) generate_server_https $path;;
+       *)   echo "test $@i";
+            generate_server_http  $path $port ;
+          ;;
+
    esac
 }
 
-generate_server_http(){
-  echo "http"
-}
 
 case $1 in
 help) help;;
 server) [ $# -lt 2 ] && help_server
-       generate_server $@
+       generate_server $@;
     ;;
 http) echo "generate for http"
-       generate_http $@
+       generate_http $@;
     ;;
 *) help ;;
 esac
