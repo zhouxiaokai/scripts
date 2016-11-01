@@ -42,7 +42,6 @@ create_server_crt()
 
 help_ca()
 {
-  [ $# -ge 1 ] && return 
    echo "$0 ca [target path for server key certification]"
    exit 1
 }
@@ -51,7 +50,7 @@ help_ca()
 
 case $1 in
 
-ca)  help_ca
+ca)  [ $# -lt 1 ] && help_ca
      path=$2
      [ -d $2 ] || mkdir -p $2
      create_server_key_check $path
