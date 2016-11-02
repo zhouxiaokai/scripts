@@ -1,10 +1,10 @@
 #!/bin/sh
 #http://pkg.phpcomposer.com/
-dir=$1
 
 help()
 {
   echo "$0 [env|link|project] [dir]"
+  exit 1
 }
 
 check_env()
@@ -73,7 +73,7 @@ install_doctrine2_orm_tutorial()
    }
    echo "doctrine2-orm-tutorial found on this dir"
    [ -d $dir/doctrine2-orm-tutorial ] &&  {
-        cd $dir/doctrine2-orm-tutorial && composer config repo.packagist composer https://packagist.phpcomposer.com &&  composer install -d . && link_docktrine
+        cd $dir/doctrine2-orm-tutorial && composer config repo.packagist composer https://packagist.phpcomposer.com &&  composer install -d . && link_doctrine
    }
 }
 
@@ -85,6 +85,8 @@ echo '
 // bootstrap .php
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
+require_once "vendor/autoload.php";
+
 // Create a simple "default" Doctrine ORM configuration for XML Mapping
 $isDevMode = true;
 $config = Setup::createAnnotationMetadataConfiguration(array(__DIR__."/src"), $isDevMode);
@@ -94,18 +96,20 @@ $config = Setup::createAnnotationMetadataConfiguration(array(__DIR__."/src"), $i
 
 // database configuration parameters
 $conn = array(
+' > $tfile/bootstrap.php
+echo "
     'driver' => 'pdo_mysql',
      'user'  => 'root',
      'password'  => 'go3c86985773',
-     'dbname'  => 'laravel',
+     'dbname'  => 'doctrine',
      'host' => 'localhost',
      'port' => '3306',
 //    'path' => __DIR__ . '/db.sqlite',
-);
-
+); " >> $tfile/bootstrap.php
+echo '
 // obtaining the entity manager
 $entityManager = \Doctrine\ORM\EntityManager::create($conn, $config);
-' > $tfile/bootstrap.php
+' >> $tfile/bootstrap.php
 
 }
 
