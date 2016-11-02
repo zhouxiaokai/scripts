@@ -37,6 +37,7 @@ case $1 in
 	[ -d "$tdir" ] || help
              install;;
    test)test ;;
+   *) help ;;
 esac
 
 
