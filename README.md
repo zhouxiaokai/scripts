@@ -10,3 +10,6 @@ HTTPS
 
 
 NPM
+
+
+Doctrine: 参考 http://docs.doctrine-project.org/en/latest/tutorials/getting-started.html 
