@@ -6,8 +6,9 @@ echo "$0 [new] [dir]"
 exit 1
 }
 check_env(){
-   echo "ok"
-
+  composer config -g repo.packagist composer https://packagist.phpcomposer.com
+  composer global require "laravel/installer"
+  grep composer ~/.bashrc || export PATH=$PATH:~/.composer/vendor/bin
 }
 
 project_env(){
@@ -88,6 +89,7 @@ return [
 ];"  > $wdir/config/database.php
 }
 
+#https://github.com/yajra/laravel-datatables-demo
 laravel_demo(){
    echo "laravel_demo $1"
    wdir=$1
@@ -110,17 +112,52 @@ laravel_demo(){
  
 }
 
-create_project(){
+project_config(){
+  local dir=$1
+  local prj=$2
+  local pdir=$1/$2
+  echo "project_config $1 $2"
+  [ -f $pdir/.env ] || project_env $pdir
+  sudo sed -e 's|^DB_DATABASE.*$|DB_DATABASE=laravel|g' $pdir/.env >/dev/null
+  sudo sed -e 's|^DB_USERNAME.*$|DB_DATABASE=root|g' $pdir/.env  >/dev/null
+  sudo sed -e 's|^DB_PASSWORD.*$|DB_DATABASE=go3c86985773|g' $pdir/.env >/dev/null
+   
+  laravel_config $1/$2
+
+}
+
+composer_new(){
    dir=$1
    [ -d $dir ] || exit 1
    composer create-project laravel/laravel $dir --prefer-dist
    project_env $dir
 }
 
+laravel_new(){
+  local tdir=$1
+  local prj=$2
+  echo "new $prj under dir $tdir"
+  cd $tdir
+  export PATH=$PATH:~/.composer/vendor/bin
+  [ -d $prj ] || laravel new $prj || exit 1 
+  
+   sudo   chown -R www:www $tdir/$prj/bootstrap/cache
+   sudo   chmod -R 755 $tdir/$prj/bootstrap/cache
+      
+   sudo   chown -R www:www $tdir/$prj/storage
+   sudo   chmod -R 755 $tdir/$prj/storage
+  
+   
+}
+
 case $1 in
    new) check_env || exit 1
-        create_project $2
+        #create_project $2
+        laravel_new $2 $3
+        project_config $2 $3
+          
        ;;
+   cnew) composer_new $2;;
    config)project_env $2;;
    demo)laravel_demo $2
         ;;

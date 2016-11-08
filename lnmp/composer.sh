@@ -8,7 +8,8 @@ php -r "unlink('composer-setup.php');"
 }
 
 curl_install(){
-	curl -sS https://getcomposer.org/installer | php    mv composer.phar /usr/local/bin/composer
+	curl -sS https://getcomposer.org/installer | php    
+        mv composer.phar /usr/local/bin/composer
 }
 
 check(){
@@ -16,8 +17,14 @@ check(){
     composer -V
 }
 
+config(){
+
+    composer config -g repo.packagist composer https://packagist.phpcomposer.com 
+}
+
 case $1 in 
    install)install;;
    check)check;;
    curl) curl_install;;
+   config)config;;
 esac
