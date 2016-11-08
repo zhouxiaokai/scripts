@@ -148,6 +148,7 @@ laravel_new(){
   LARAVEL="~/.composer/vendor/bin/laravel"
   [ -d $prj ] || ~/.composer/vendor/bin/laravel new $prj || exit 1 
   
+  composer config  repo.packagist composer https://packagist.phpcomposer.com
    sudo   chown -R www:www $tdir/$prj/bootstrap/cache
    sudo   chmod -R 755 $tdir/$prj/bootstrap/cache
       
