@@ -51,8 +51,8 @@ help_ca()
 case $1 in
 
 ca)  [ $# -lt 1 ] && help_ca
-     path=$2
-     [ -d $2 ] || mkdir -p $2
+     path=$2/nginx
+     [ -d $path ] || mkdir -p $path
      create_server_key_check $path
      create_server_key $path
      create_server_csr $path

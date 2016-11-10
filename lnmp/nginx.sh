@@ -14,11 +14,45 @@ help_server()
    exit 1
 }
 
+enable_php(){
+  local tdir=$1
+echo '
+        location ~ [^/]\.php(/|$)
+        {
+            try_files $uri =404;
+            fastcgi_pass  unix:/dev/shm/php-cgi.sock;
+            fastcgi_index index.php;
+            include fastcgi.conf;
+        }
+'>$tdir/enable-php.conf
+
+}
+
+enable_php_pathinfo(){
+local tdir=$1
+echo '
+fastcgi_split_path_info ^(.+?\.php)(/.*)$;
+set $path_info $fastcgi_path_info;
+fastcgi_param PATH_INFO       $path_info;
+try_files $fastcgi_script_name =404;
+' > $tdir/pathinfo.conf
+
+echo '
+        location ~ [^/]\.php(/|$)
+        {
+            fastcgi_pass  unix:/dev/shm/php-cgi.sock;
+            fastcgi_index index.php;
+            include fastcgi.conf;
+            include pathinfo.conf;
+        }
+
+' > $tdir/enable-php-pathinfo.conf
+}
 
 generate_server_https()
 {
  echo "https"
- [ -d $1/vhost ] || mkdir -p $1/vhost
+ [ -d $1/vhost ] || sudo mkdir -p $1/vhost
  conf=$1/vhost/443.conf
  server_name=$3
  echo "
@@ -40,7 +74,7 @@ server {
 #    ssl_prefer_server_ciphers   on;
 
     location / {
-     root   /home/wwwroot/www;
+     root   /home/wwwroot/default;
      index  testssl.html index.html index.htm index.php;
      include enable-php.conf;
      proxy_redirect off;
@@ -53,7 +87,7 @@ server {
 }
 
 generate_server_http(){
-  [ -d $1/vhost ] || mkdir -p $1/vhost
+  [ -d $1/vhost ] || sudo  mkdir -p $1/vhost
   conf=$1/vhost/$2.conf
   server_name=$3
   echo " server
@@ -110,6 +144,8 @@ generate_server(){
    port=$3
    path=$4   
   echo "path=$path port=$port"
+   enable_php $4
+   enable_php_pathinfo $4
    case $port in 
        443) generate_server_https $path $port $host;;
        *)   echo "test $@i";
@@ -120,6 +156,7 @@ generate_server(){
 }
 
 
+
 case $1 in
 help) help;;
 server) [ $# -lt 4 ] && help_server
@@ -128,5 +165,6 @@ server) [ $# -lt 4 ] && help_server
 http) echo "generate for http"
        generate_http $@;
     ;;
+php);;
 *) help ;;
 esac
