@@ -24,7 +24,8 @@ src(){
       tar -xzvf /home/build/oneinstack-full.tar.gz -C /home/build/
       
    }
-   cd /home/build/oneinstack && sudo  ./install.sh
+   cd /home/build/oneinstack && sudo  ./install.sh && ./addon.sh
+  
 }
 
 help(){
