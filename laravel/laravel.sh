@@ -8,7 +8,13 @@ exit 1
 check_env(){
   composer config -g repo.packagist composer https://packagist.phpcomposer.com
   composer global require "laravel/installer"
-  grep composer ~/.bashrc || export PATH=$PATH:~/.composer/vendor/bin
+  [ -f ~/.bashrc ] &&  grep composer ~/.bashrc || export PATH=$PATH:~/.composer/vendor/bin
+  [ -f ~/.bashrc ] ||  {
+  echo '
+  #!/bin/sh
+  export PATH=$PATH:~/.composer/vendor/bin
+' > ~/.bashrc
+}
 }
 
 project_env(){
@@ -139,8 +145,10 @@ laravel_new(){
   echo "new $prj under dir $tdir"
   cd $tdir
   export PATH=$PATH:~/.composer/vendor/bin
-  [ -d $prj ] || laravel new $prj || exit 1 
+  LARAVEL="~/.composer/vendor/bin/laravel"
+  [ -d $prj ] || ~/.composer/vendor/bin/laravel new $prj || exit 1 
   
+  composer config  repo.packagist composer https://packagist.phpcomposer.com
    sudo   chown -R www:www $tdir/$prj/bootstrap/cache
    sudo   chmod -R 755 $tdir/$prj/bootstrap/cache
       

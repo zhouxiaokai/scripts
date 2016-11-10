@@ -17,14 +17,14 @@ install(){
    }
    tar -xzvf /tmp/dbninja.tar.gz -C $tdir
    sudo chmod 775 $tdir/dbninja/_users
-
+}
 #http://www.dbninja.com/?page=resources&z=102
-   yum -y install  php-mysqli
-   yum --enablerepo=remi install php-pecl-jsonc
+   sudo yum -y install  php-mysqli
+   sudo yum -y --enablerepo=remi install php-pecl-jsonc
    user=` ps -eo ruser,rgroup,command |egrep "apache|nginx|lighttpd" |egrep -m 1 -v "root|grep" | awk '{print $1}'`
    group=` ps -eo ruser,rgroup,command |egrep "apache|nginx|lighttpd" |egrep -m 1 -v "root|grep" | awk '{print $2}'`
-   chown -R $user:$group $tdir/dbninja 
-}
+   sudo chown -R $user:$group $tdir/dbninja 
+
 }
 
 test(){

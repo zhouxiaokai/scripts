@@ -14,3 +14,5 @@ gem sources --remove http://rubygems.org/
 gem sources -a https://ruby.taobao.org/
 
 gem sources -l
+
+gem install genghisapp
