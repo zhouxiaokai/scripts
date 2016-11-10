@@ -96,9 +96,62 @@ port_off(){
   port_forward_off $1
 }
 
+dns_output(){
 
-drop_all(){
+  port_in_on -s 127.0.0.1 -d 127.0.0.1 -j ACCEPT
+  port_in_on -p udp -m udp --sport 53 -j ACCEPT
+  port_in_on -p udp -m udp --dport 53 -j ACCEPT
+  port_in_on -d 192.168.19.108 -p icmp -j ACCEPT
+}
+
+dns_on()
+{
+   iptables -C INPUT -p udp -m udp --sport 53 -j ACCEPT > /dev/null || {
+    iptables -A INPUT -p udp -m udp --sport 53 -j ACCEPT
+   }
+   
+   iptables -C INPUT -p udp -m udp --dport 53 -j ACCEPT > /dev/null || {
+    iptables -A INPUT -p udp -m udp --dport 53 -j ACCEPT
+   }
+   iptables -C OUTPUT -p udp -m udp --sport 53 -j ACCEPT > /dev/null || {
+    iptables -A OUTPUT  -p udp -m udp --sport 53 -j ACCEPT
+   }
+
+   iptables -C OUTPUT -p udp -m udp --dport 53 -j ACCEPT > /dev/null || {
+    iptables -A OUTPUT -p udp -m udp --dport 53 -j ACCEPT
+   }
+
+}
+
+IFIP=`ifconfig | grep Bcast | awk '{print $2}' | awk -F':' '{print $2}'`
+
+icmp_on(){
+   iptables -C INPUT -d $IFIP -p icmp -j ACCEPT > /dev/null || {
+    iptables -A INPUT -d $IFIP  -p icmp  -j ACCEPT
+   }
+
+   iptables -C OUTPUT -s $IFIP -p icmp -j ACCEPT > /dev/null || {
+    iptables -A OUTPUT -s $IFIP -p icmp -j ACCEPT
+   }
+}
+
+
+loop_on(){
+   iptables -C INPUT -s 127.0.0.1 -d 127.0.0.1 -j ACCEPT > /dev/null || {
+    iptables -A INPUT -s 127.0.0.1  -d 127.0.0.1  -j ACCEPT
+   }
+
+   iptables -C OUTPUT -s 127.0.0.1 -d 127.0.0.1  -j ACCEPT > /dev/null || {
+    iptables -A OUTPUT -s 127.0.0.1 -d 127.0.0.1 -j ACCEPT
+   }
+}
+
+
+init(){
   ssh_on
+  loop_on 
+  dns_on
+  icmp_on
   iptables -P INPUT DROP
   iptables -P OUTPUT DROP
   iptables -P FORWARD DROP
