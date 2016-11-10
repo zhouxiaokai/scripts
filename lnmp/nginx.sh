@@ -1,35 +1,31 @@
 #!/bin/sh
 
-help(){
-  echo $0
-  echo "	[server] [host] [port] [conf root path]  [opts]"
-  echo "	[http]  [opts]"
-  exit 1
-}
+. ./include/help.sh
 
-help_server()
-{
-   echo "$0  server"
-   echo " [host] [port] [conf root path]  [ -r root ] [ -i index ]   "
-   exit 1
-}
 
 enable_php(){
+
   local tdir=$1
+  local sock=$2
+  [ -z "$sock" ] && sock="/tmp"
 echo '
         location ~ [^/]\.php(/|$)
         {
             try_files $uri =404;
-            fastcgi_pass  unix:/dev/shm/php-cgi.sock;
+'>$tdir/enable-php.conf
+echo "      fastcgi_pass  unix:$sock/php-cgi.sock;" >>$tdir/enable-php.conf
+echo '
             fastcgi_index index.php;
             include fastcgi.conf;
         }
-'>$tdir/enable-php.conf
+'>>$tdir/enable-php.conf
 
 }
 
 enable_php_pathinfo(){
 local tdir=$1
+  local sock=$2
+  [ -z "$sock" ] && sock="/tmp"
 echo '
 fastcgi_split_path_info ^(.+?\.php)(/.*)$;
 set $path_info $fastcgi_path_info;
@@ -40,13 +36,15 @@ try_files $fastcgi_script_name =404;
 echo '
         location ~ [^/]\.php(/|$)
         {
-            fastcgi_pass  unix:/dev/shm/php-cgi.sock;
+'>$tdir/enable-php-pathinfo.conf
+echo "      fastcgi_pass  unix:$sock/php-cgi.sock;" >> $tdir/enable-php-pathinfo.conf
+echo '
             fastcgi_index index.php;
             include fastcgi.conf;
             include pathinfo.conf;
         }
 
-' > $tdir/enable-php-pathinfo.conf
+' >> $tdir/enable-php-pathinfo.conf
 }
 
 generate_server_https()
@@ -74,7 +72,9 @@ server {
 #    ssl_prefer_server_ciphers   on;
 
     location / {
-     root   /home/wwwroot/default;
+' >>$1/vhost/443.conf
+echo "root   /home/wwwroot/default;" >> $1/vhost/443.conf
+echo '
      index  testssl.html index.html index.htm index.php;
      include enable-php.conf;
      proxy_redirect off;
@@ -88,14 +88,15 @@ server {
 
 generate_server_http(){
   [ -d $1/vhost ] || sudo  mkdir -p $1/vhost
-  conf=$1/vhost/$2.conf
-  server_name=$3
+  local conf=$1/vhost/$2.conf
+  local server_name=$3
+  local root=$4
   echo " server
         {
         listen $2 default_server;
         server_name $3;
         index index.html index.htm index.php;
-        root  /home/wwwroot/admin;
+        root  $4;
         #error_page   404   /404.html;
         include enable-php.conf; "  > $conf
   echo  'location /nginx_status
@@ -132,39 +133,53 @@ location ~ /services/.*$ {
         }
     }
 
-        access_log  /home/wwwlogs/access.log  access;
+        access_log  /home/wwwlogs/access.log;
     }' >> $conf
+}
+
+generate_server_root(){
+
+   local root=$1
+   local port=$2
+   local servername=$3
+   [ -d $root ] || sudo mkdir -p $root
+   sudo echo "Hello , here is path $root for server:port[$servername-$port] " >> $root/index.html
 }
 
 
 generate_server(){
    echo " $@"
-   [ $# -lt 3 ] &&  help_server
-   host=$2
-   port=$3
-   path=$4   
-  echo "path=$path port=$port"
-   enable_php $4
-   enable_php_pathinfo $4
+   path=$1
+   port=$2
+   root=$3
+   host=$4
+   echo "path=$path port=$port"
    case $port in 
-       443) generate_server_https $path $port $host;;
+       443) generate_server_https $path $port $host $root;;
        *)   echo "test $@i";
-            generate_server_http  $path $port $host ;
-          ;;
+            generate_server_http  $path $port $host $root;;
 
    esac
+   generate_server_root $root $port $host
 }
 
 
 
 case $1 in
-help) help;;
-server) [ $# -lt 4 ] && help_server
+server) 
+       param_check $# 5 "server [tdir] [port ] [root] [server name] "
+       [ $? == 1 ] && exit 1
+       shift
+       echo "here $@"
        generate_server $@;
     ;;
 http) echo "generate for http"
        generate_http $@;
     ;;
-php);;
-*) help ;;
+php) param_check $# 1 "php [tdir] [sock path] "
+     shift
+     enable_php $@
+     enable_php_pathinfo $@
+    ;;
+*) help "[server|http|php] [tdir] [port] [root] [server name]";;
 esac

@@ -133,6 +133,13 @@ icmp_on(){
    iptables -C OUTPUT -s $IFIP -p icmp -j ACCEPT > /dev/null || {
     iptables -A OUTPUT -s $IFIP -p icmp -j ACCEPT
    }
+   iptables -C  INPUT -j REJECT --reject-with icmp-host-prohibited || {
+     iptables -A  INPUT -j REJECT --reject-with icmp-host-prohibited
+   }
+
+   iptables -C FORWARD -j REJECT --reject-with icmp-host-prohibited || {
+     iptables -A FORWARD -j REJECT --reject-with icmp-host-prohibited
+   }
 }
 
 

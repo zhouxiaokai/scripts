@@ -1,28 +1,44 @@
 #!/bin/sh
 
-BACKFLAGS=" -e --max_allowed_packet=4194304 --net_buffer_length=16384 "
-go3c(){
-  mysqldump -u root -p --databases  > D:\backup.sql
-  mysqldump -u root  -p --all-databases > go3c-`date '+%Y-%m-%d-%H-%M-%S'`.sql
+TEST="1"
+. ./include/help.sh
+. ./include/date.sh
+. ./include/network.sh
+
+MYSQLDUMP="/usr/local/mysql/bin/mysqldump -S /tmp/mysql.sock -p"go3c86985773" --set-gtid-purged=OFF"
+
+#BACKFLAGS=" -e --max_allowed_packet=4194304 --net_buffer_length=16384 "
+
+check_dir(){
+  [ -d $1 ] || { 
+   echo 1 
+   return
+}
+  local hostmac=$(getmac)
+   [ -d $1/$hostmac/$2/$(getdate)/$(gettime) ] || mkdir -p  $1/$hostmac/$2/$(getdate)/$(gettime)
+   echo $1/$hostmac/$2/$(getdate)/$(gettime)
 }
 
-all(){
-  local   tdir=$1
-
-  [ -d $tdir ] || {
-   echo "Target directory $tdir not exist"
-   exit 1
- }
-  echo "mysqldump -u root  -p --all-databases > $tdir/`hostname`-`date '+%Y-%m-%d-%H-%M-%S'`.sql"
-  mysqldump -u root  -p --all-databases $BACKFLAGS > $tdir/`hostname`-`date '+%Y-%m-%d-%H-%M-%S'`.sql
+backup_all(){
+   
+  local tdir=$(check_dir $1 all)
+   [ "$tdir" == "1" ] && return 
+   $MYSQLDUMP -A   >  $tdir/data.sql || rm -rf $tdir
 }
 
-help_back(){
-  echo "$0 [all|db] [target dir]"
+backup_db(){
+  local tdir=$(check_dir $1 $2)
+   [ "$tdir" == "1" ] && return 
+  local dbn=$2
+  $MYSQLDUMP  --databases $dbn > $tdir/data.sql || rm -rf $tdir
 }
-
-[ $# -lt 2 ] && help_back
 case $1 in
-   all) all $2;;
-    *) help_back;;
+    all) param_check $# 2 "all [workdir]"
+        shift
+        backup_all $@;;
+    db)  param_check $# 3 "db [workdir] [dbname]"
+       echo "hello"
+       shift  
+       backup_db $@;;
+    *) help "[all|db] [workdir] [dbname]";;
 esac
