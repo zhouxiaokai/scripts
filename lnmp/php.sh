@@ -89,7 +89,17 @@ src_install(){
       tar -xzvf /tmp/php-5.6.22.tar.gz -C /tmp || exit 1
    }
 
-    cd /tmp/php-5.6.22 && [ -f Makefile ] || ./configure --prefix=/usr/local/php --with-config-file-path=/usr/local/php/etc --with-fpm-user=www --with-fpm-group=www  --enable-fpm --enable-opcache --with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd --enable-fileinfo   --with-iconv-dir=/usr/local  --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib --with-libxml-dir=/usr --enable-xml   --disable-rpath --enable-bcmath --enable-shmop --enable-exif --enable-sysvsem --enable-inline-optimization --with-curl   --enable-mbregex --enable-mbstring  --with-mcrypt --with-gd --enable-gd-native-ttf --with-openssl --with-mhash  --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --with-gettext --enable-zip --enable-soap --disable-ipv6  --disable-debug  
+    cd /tmp/php-5.6.22 && [ -f Makefile ] || ./configure \
+                   --prefix=/usr/local/php \
+                   --with-config-file-path=/usr/local/php/etc \
+                   --with-fpm-user=www \
+                   --with-fpm-group=www  \
+                   --enable-fpm --enable-opcache \
+                   --with-mysql=mysqlnd \
+                   --with-mysqli=mysqlnd \
+                   --with-pdo-mysql=mysqlnd \
+                   --enable-fileinfo   \
+                   --with-iconv-dir=/usr/local  --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib --with-libxml-dir=/usr --enable-xml   --disable-rpath --enable-bcmath --enable-shmop --enable-exif --enable-sysvsem --enable-inline-optimization --with-curl   --enable-mbregex --enable-mbstring  --with-mcrypt --with-gd --enable-gd-native-ttf --with-openssl --with-mhash  --enable-pcntl --enable-sockets --with-xmlrpc --enable-ftp --with-gettext --enable-zip --enable-soap --disable-ipv6  --disable-debug  
  
     cd /tmp/php-5.6.22 && [ -f Makefile ] &&  make ZEND_EXTRA_LIBS='-liconv' && sudo make install && {
           [ -L /usr/bin/php ] && rm -rf /usr/bin/php
@@ -125,8 +135,12 @@ chkconfig php-fpm on
 service php-fpm start
 }
 
+env (){
+  yum -y install opencryptoki-devel.x86_64  nettle-devel.x86_64  beecrypt-devel.x86_64  cryptopp-devel.x86_64 ecryptfs-utils-devel.x86_64 cryptsetup-luks-devel.x86_64 libgcrypt-devel.x86_64  libmcrypt-devel.x86_64  libscrypt-devel.x86_64  libtomcrypt-devel.x86_64 opencryptoki-devel.x86_64 nss-pkcs11-devel.x86_64
+}
 
 case $1 in
+   env) env;;
    src) src_install;;
    bak) backup_php;;
    ini) php_ini $2
