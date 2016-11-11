@@ -1,25 +1,45 @@
 #!/bin/sh
 
+#https://laravel.com/docs/5.0/migrations
+#http://labs.infyom.com/laravelgenerator/docs/5.2/boilerplates
+
+. ./include/help.sh
+. ./include/mysql.sh
+. ./include/laravel.sh
+
+param_check $# 1 "[work path begin with /]"
+[ $? -ne 0 ]  && exit 1
 tdir=$1
-[ -d $tdir  ] || {
-  echo "$tdir not exist"
-  exit 1
-}
-
-
-[ $# -lt 1 ] && {
-  echo "$0 [dir full path start by / ]"
-  exit 1
-}
-
 setdir(){
  local sdir=$1
 [ -d $tdir/$sdir ] || sudo  mkdir -p $tdir/$sdir && cd $tdir/$sdir
 echo "We are  $tdir/$sdir"
 }
 
+
+laravel_env()
+{
+ local fenv=$1/.env
+
+  localhost_enable
+  laravel_env_app $fenv
+  laravel_env_db $fenv
+  laravel_env_queue $fenv
+  laravel_env_redis $fenv
+  laravel_env_mail $fenv
+  laravel_env_key  $1
+  cd  $1 
+  php artisan migrate
+}
+
+
 GIT="git clone --depth=1"
 
-setdir generator/laravel
+setdir InfyOm
 
 $GIT https://github.com/InfyOmLabs/adminlte-generator 
+
+cd adminlte-generator
+laravel_pre
+laravel_env `pwd`
+
