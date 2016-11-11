@@ -37,7 +37,7 @@ GIT="git clone --depth=1"
 
 setdir InfyOm
 
-$GIT https://github.com/InfyOmLabs/adminlte-generator 
+$GIT -b 5.2 https://github.com/InfyOmLabs/adminlte-generator 
 
 cd adminlte-generator
 laravel_pre
