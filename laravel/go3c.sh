@@ -42,4 +42,7 @@ $GIT -b 5.2 https://github.com/InfyOmLabs/adminlte-generator
 cd adminlte-generator
 laravel_pre
 laravel_env `pwd`
+laravel_config_db `pwd`
+laravel_config_mail `pwd`
+php artisan serve --host=0
 
