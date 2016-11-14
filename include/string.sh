@@ -38,4 +38,4 @@ echo test
 #/usr/bin/awstats -c /nfs/apache/logs/awstats/awstats.conf  
 }
 
-replace_all $@
+#replace_all $@

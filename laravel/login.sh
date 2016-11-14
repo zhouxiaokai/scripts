@@ -10,20 +10,19 @@ clone(){
   git clone --depth=1 https://github.com/parin95/Laravel-Login
   cd $tdir/Laravel-Login
   composer config  repo.packagist composer https://packagist.phpcomposer.com
-  sed -i 's|^.*"laravel/framework":.*|            "laravel/framework": "5.2.*"|g' $tdir/Laravel-Login/composer.json
+  #sed -i 's|^.*"laravel/framework":.*|            "laravel/framework": "5.2.*"|g' $tdir/Laravel-Login/composer.json
   composer update 
   composer install
- 
+  git clone --depth=1 https://github.com/adamwathan/eloquent-oauth
+   
 }
 
-help(){
-  [ $# -lt 1 ] && {
-   echo "$0" [tdir]
+  [ $# -lt 2 ] && {
+   echo "$0" [clone] [tdir]
    exit 1
   }
-}
 
 case $1 in
-   clone)help $@ 
+   clone)
          clone $2 ;;
 esac
