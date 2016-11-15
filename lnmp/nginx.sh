@@ -2,6 +2,14 @@
 
 . ./include/help.sh
 
+enable_cors(){
+echo '
+add_header Access-Control-Allow-Origin *;
+add_header Access-Control-Allow-Headers X-Requested-With;
+add_header Access-Control-Allow-Methods GET,POST,OPTIONS;
+' > /dev/null
+}
+
 
 enable_php(){
 
