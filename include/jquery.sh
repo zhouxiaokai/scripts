@@ -33,7 +33,12 @@ echo "test $@"
    do
        [ -f $troot/fonts/$pkg ] || wget $url/fonts/$pkg -O $troot/fonts/$pkg
    done 
-
+    [ -f $troot/fonts/glyphicons-halflings-regular.woff2  ] || {
+     [ -f /tmp/bootstrap-$ver.zip ] ||   wget https://github.com/twbs/bootstrap/archive/v$ver.zip -O /tmp/bootstrap-$ver.zip
+     unzip -x /tmp/bootstrap-$ver.zip -d /tmp/
+     cp /tmp/bootstrap-$ver/fonts/* $troot/fonts/ -rdf
+     rm -rf /tmp/bootstrap-$ver
+  }
 }
 
 
@@ -61,6 +66,13 @@ font_awesome(){
    do
        [ -f $troot/fonts/$pkg ] || wget $url/fonts/$pkg -O $troot/fonts/$pkg
    done
+    [ -f $troot/fonts/fontawesome-webfont.woff2  ] || {
+     [ -f /tmp/font-awesome-$ver.zip ] ||   wget https://github.com/FortAwesome/Font-Awesome/archive/v$ver.zip -O /tmp/font-awesome-$ver.zip
+     unzip -x /tmp/font-awesome-$ver.zip -d /tmp/
+     cp /tmp/Font-Awesome-$ver/fonts/* $troot/fonts/ -rdf
+     rm -rf /tmp/Font-Awesome-$ver
+  }
+
 }
 
 ionicons(){
@@ -81,7 +93,7 @@ admin_lte(){
    local tdir=$1
    local ver=$2
    local rel=$3
-   [ -z $ver ] && ver="2.3.3"
+   [ -z $ver ] && ver="2.3.2"
    local troot=$tdir/admin-lte/$ver
    [ -d  $troot/css/skins ] || mkdir -p  $troot/css/skins
    [ -d  $troot/js/pages ] || mkdir -p  $troot/js/pages
@@ -215,16 +227,19 @@ select2(){
 
    [ -d $troot/css/ ] || mkdir -p $troot/css
    [ -d $troot/js/i18n ] || mkdir -p $troot/js/i18n
-   local url="http://cdn.bootcss.com/select2/$ver/" 
-    [ -f $troot/css/select2.css ] && wget $url/css/select2.css -O $troot/css/select2.css
-    [ -f $troot/css/select2.min.css ] && wget $url/css/select2.css -O $troot/css/select2.min.css
-    [ -f $troot/js/select2.min.js ] && wget $url/js/select2.min.js -O $troot/js/select2.min.js
-    [ -f $troot/js/select2.js ] && wget $url/js/select2.js -O $troot/js/select2.js
-    [ -f $troot/js/select2.full.js ] && wget $url/js/select2.full.js -O $troot/js/select2.full.js
-    [ -f $troot/js/select2.full.min.js ] && wget $url/js/select2.full.min.js -O $troot/js/select2.full.min.js
-    [ -f $troot/js/i18n/en.js ] || wget $url/js/i18n/en.js -O $troot/js/i18n/en.js
-    [ -f $troot/js/i18n/zh-CN.js ] || wget $url/js/i18n/zh-CN.js -O $troot/js/i18n/zh-CN.js
-    [ -f $troot/js/i18n/zh-TW.js ] || wget $url/js/i18n/zh-TW.js -O $troot/js/i18n/zh-TW.js
+   local url="http://cdn.bootcss.com/select2/$ver/"
+    local pkgs="select2"
+    for pkg in $pkgs
+    do
+          [ -f $troot/css/$pkg.css ] || wget $url/css/$pkg.css -O $troot/css/$pkg.css 
+          [ -f $troot/css/$pkg.min.css ] || wget $url/css/$pkg.min.css -O $troot/css/$pkg.min.css 
+    done 
+     local pkgs="select2 select2.full i18n/en i18n/zh-CN i18n/zh-TW"
+    for pkg in $pkgs
+    do
+          [ -f $troot/js/$pkg.js ] || wget $url/js/$pkg.js -O $troot/js/$pkg.js
+          [ -f $troot/js/$pkg.min.js ] || wget $url/js/$pkg.min.js -O $troot/js/$pkg.min.js
+    done   
 
 }
 
@@ -235,10 +250,23 @@ iCheck(){
    [ -z $ver ] && ver="1.0.2"
    local troot=$tdir/iCheck/$ver
    [ -d $troot/skins/flat ] || mkdir -p $troot/skins/flat
+   [ -d $troot/skins/minimal ] || mkdir -p $troot/skins/minimal
+   [ -d $troot/skins/square ] || mkdir -p $troot/skins/square
+   [ -d $troot/skins/polaris ] || mkdir -p $troot/skins/polaris
+   [ -d $troot/skins/futurico ] || mkdir -p $troot/skins/futurico
+   [ -d $troot/skins/line ] || mkdir -p $troot/skins/line
+
    local url="http://cdn.bootcss.com/iCheck/$ver/"
+   local pkgs="skins/flat/_all skins/minimal/_all skins/square/_all skins/line/_all skins/polaris/polaris skins/futurico/futurico"
+   for pkg in $pkgs
+   do
+       [ -f $troot/$pkg.css ] || wget $url/$pkg.css -O $troot/$pkg.css
+       
+   done
+   local pkg="skins/square/blue.png"
+   [ -f $troot/$pkg ] ||  wget $url/$pkg -O $troot/$pkg
+ 
    [ -f $troot/icheck.min.js ] || wget $url/icheck.min.js -O $troot/icheck.min.js
    [ -f $troot/icheck.js ] || wget $url/icheck.js -O $troot/icheck.js
-   [ -f $troot/skins/all.css ] || wget $url/skins/all.css -O $troot/skins/all.css
-   [ -f $troot/skins/flat/_all.css ] || wget $url/skins/flat/_all.css -O $troot/skins/flat/_all.css
    
 }
