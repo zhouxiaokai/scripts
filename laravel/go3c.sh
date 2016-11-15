@@ -47,6 +47,7 @@ laravel_env `pwd`
 laravel_config_db `pwd`
 laravel_config_mail `pwd`
 
+enable_builder `pwd`
 wdir=`pwd`
 
 go3c_laravel $wdir/resources/views "https://cdn.datatables.net/1.10.12/" "s|https://cdn.datatables.net/1.10.12|http://www.go3c.tv/assets/ajax/libs/datatables/1.10.12|g"

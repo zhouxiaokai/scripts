@@ -127,6 +127,16 @@ MAIL_ENCRYPTION=ssl
 ' >> $1
 }
 
+enable_builder(){
+   local wdir=$1
+   sed -i '/"require":.*{/a       "infyomlabs/generator-builder": "dev-master",' $wdir/composer.json
+   composer update
+   sed -i '/.*InfyOmGeneratorServiceProvider::class.*$/a  \\\InfyOm\\GeneratorBuilder\\GeneratorBuilderServiceProvider::class,' $wdir/config/app.php
+   php artisan vendor:publish 
+   php artisan infyom.publish:generator-builder 
+   php artisan route:list
+}
+
 laravel_pre(){
   composer install
   npm i
