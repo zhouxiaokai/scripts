@@ -34,9 +34,10 @@ echo "test $@"
        [ -f $troot/fonts/$pkg ] || wget $url/fonts/$pkg -O $troot/fonts/$pkg
    done 
     [ -f $troot/fonts/glyphicons-halflings-regular.woff2  ] || {
-     [ -f /tmp/bootstrap-$ver.zip ] ||   wget https://github.com/twbs/bootstrap/archive/v$ver.zip -O /tmp/bootstrap-$ver.zip
-     unzip -x /tmp/bootstrap-$ver.zip -d /tmp/
-     cp /tmp/bootstrap-$ver/fonts/* $troot/fonts/ -rdf
+     [ -f /tmp/bootstrap-$ver.zip ] ||  {
+        download_zip_x twbs/bootstrap/archive/v$ver.zip   bootstrap-$ver.zip /tmp || exit 1
+     }
+     cp /tmp/bootstrap-$ver/fonts/* $troot/fonts/ -rdf 
      rm -rf /tmp/bootstrap-$ver
   }
 }
@@ -67,8 +68,8 @@ font_awesome(){
        [ -f $troot/fonts/$pkg ] || wget $url/fonts/$pkg -O $troot/fonts/$pkg
    done
     [ -f $troot/fonts/fontawesome-webfont.woff2  ] || {
-     [ -f /tmp/font-awesome-$ver.zip ] ||   wget https://github.com/FortAwesome/Font-Awesome/archive/v$ver.zip -O /tmp/font-awesome-$ver.zip
-     unzip -x /tmp/font-awesome-$ver.zip -d /tmp/
+     [ -f /tmp/font-awesome-$ver.zip ] ||   download_zip_x FortAwesome/Font-Awesome/archive/v$ver.zip font-awesome-$ver.zip /tmp || exit 1
+     #unzip -x /tmp/font-awesome-$ver.zip -d /tmp/
      cp /tmp/Font-Awesome-$ver/fonts/* $troot/fonts/ -rdf
      rm -rf /tmp/Font-Awesome-$ver
   }
@@ -85,6 +86,22 @@ ionicons(){
    local url="http://cdn.bootcss.com/ionicons/$ver/css"
   [ -f $troot/css/ionicons.min.css ] ||  wget $url/ionicons.min.css -O  $troot/css/ionicons.min.css
   [ -f $troot/css/ionicons.min.css ] ||  wget $url/ionicons.css -O  $troot/css/ionicons.css
+}
+
+vue(){
+   local tdir=$1
+   local ver=$2
+   local rel=$3
+   [ -z $ver ] && ver="1.0.26"
+   local troot=$tdir/vue/$ver
+   local pkgs="vue vue.common"
+   [ -d $troot/ ] || mkdir -p $troot/
+   local url="http://cdn.bootcss.com/vue/$ver/"
+   for pkg in $pkgs
+   do
+      [ -f $troot/$pkg.js ] || wget $url/$pkg.js -O $troot/$pkg.js
+      [ -f $troot/$pkg.min.js ] || wget $url/$pkg.min.js -O $troot/$pkg.min.js
+   done
 }
 
 admin_lte(){
@@ -150,6 +167,13 @@ datatables(){
    done
     [ -f $troot/css/jquery.dataTables_themeroller.css  ] || wget $url/css/jquery.dataTables_themeroller.css -O $troot/css/jquery.dataTables_themeroller.css
    
+    local imgs="sort_both.png sort_asc.png"
+     [ -d $troot/images ] || mkdir -p $troot/images
+    for img in $imgs
+    do
+        [ -f $troot/images/$img ] ||  wget $url/images/$img -O $troot/images/$img
+    done
+
    local ver="1.1.2"
    local troot=$tdir/datatables-colvis/$ver
    local url="http://cdn.bootcss.com/datatables-colvis/$ver"
@@ -210,9 +234,20 @@ datatables(){
    for pkg in $pkgs
    do
         [ -f $troot/js/$pkg.js ] || wget $url/js/$pkg.js -O $troot/js/$pkg.js
-        [ -f $troot/js/$pkg.min.js ] || wget $url/js/$pkg.js -O $troot/js/$pkg.min.js
+        [ -f $troot/js/$pkg.min.js ] || wget $url/js/$pkg.min.js -O $troot/js/$pkg.min.js
 		
    done
+
+  local pkgs="buttons.bootstrap"
+ 
+   [ -d $troot/css ] || mkdir -p   $troot/css
+
+   for pkg in $pkgs
+   do
+        [ -f $troot/css/$pkg.css ] || wget $url/css/$pkg.css -O $troot/css/$pkg.css
+        [ -f $troot/css/$pkg.min.css ] || wget $url/css/$pkg.min.css -O $troot/css/$pkg.min.css
+
+   done 
 
 }
 
