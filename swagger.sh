@@ -5,6 +5,9 @@ wdir=$1
  exit 1
 }
 
+which nrm || sudo npm -g i nrm
+sudo nrm use taobao
+
 ver="2.10.4"
 [ -d $wdir/swagger-editor ] || {
  #git clone --depth=1  -b v2.10.4 https://github.com/swagger-api/swagger-editor/
