@@ -66,6 +66,23 @@ case $ver in
   *);;
 esac
 
+echo "passport"
+laravel_passport $wdir
+
+echo "cashier"
+laravel_cashier $wdir
+
+echo "scout"
+laravel_scout $wdir
+
+echo "socialite"
+laravel_socialite $wdir 
+
+
+echo "Config laravel_form_builder"
+laravel_form_builder $wdir
+
+
 
 echo "config Swaggeravel"
 laravel_Swaggervel $wdir
@@ -80,6 +97,12 @@ enable_builder $wdir
 echo "Config for dotenv_editor"
 laravel_dotenv_editor $wdir
 [ $? -ne 0 ] && exit 1
+
+echo "Enable DebugBar"
+laravel_debugbar $wdir
+echo "Enable Twig"
+laravel_twig $wdir
+
 go3c_laravel $wdir "https://cdn.datatables.net/1.10.12/" "s|https://cdn.datatables.net/1.10.12|http://www.go3c.tv/assets/ajax/libs/datatables/1.10.12|g"
 go3c_laravel $wdir "//cdn.datatables.net/1.10.12/" "s|//cdn.datatables.net/1.10.12|http://www.go3c.tv/assets/ajax/libs/datatables/1.10.12|g"
 go3c_laravel $wdir "https://ajax.googleapis.com" "s|https://ajax.googleapis.com|http://www.go3c.tv/assets|g"

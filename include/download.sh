@@ -1,7 +1,7 @@
 #!/bin/sh
 
 
-urls="http://www.go3c.tv:8040/download/devel/app/  https://github.com/"
+urls="http://www.go3c.tv:8040/download/devel/app/     http://www.go3c.tv:8040/download/devel/env       https://github.com/"
 
 
 download_zip_x()
@@ -48,11 +48,15 @@ download_git(){
  #git clone --depth=1 $br $gurl/$pkg  && return 0
  #try download master.zip
  [ -d /tmp/$pkg ] || mkdir -p /tmp/$pkg 
+ local pkgs="$ver.zip v$ver.zip"
  for url in $urls
  do
+     for i in $pkgs
+     do 
       print_color $url/$pkg/archive/$ver.zip
       wget $url/$pkg/archive/$ver.zip -O /tmp/$pkg/master.zip || continue
       unzip -x /tmp/$pkg/master.zip  &&  return 0
+     done
  done
  return 0
 }

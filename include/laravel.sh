@@ -79,11 +79,13 @@ APP_URL=http://localhost
 
 laravel_env_db(){
 
+local dbn=$1
+[ -z "$dbn" ] && dbn="model"
 echo '
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=laravel
+DB_DATABASE="'$dbn'"
 DB_USERNAME=root
 DB_PASSWORD=go3c86985773
 ' >> $1
@@ -153,10 +155,10 @@ laravel_migrate(){
 laravel_env()
 {
  local fenv=$1/.env
-
+ local dbn=$2
   localhost_enable
   laravel_env_app $fenv
-  laravel_env_db $fenv
+  laravel_env_db $fenv $dbn
   laravel_env_queue $fenv
   laravel_env_redis $fenv
   laravel_env_mail $fenv
@@ -258,6 +260,19 @@ laravel_datatable_builder(){
   cd $wdir &&  composer update
 }
 
+laravel_form_builder(){
+ print_color "https://github.com/kristijanhusak/laravel-form-builder"
+  local wdir=$1
+  cd $wdir || exit 1
+  sed -i 's/.*\"kris\/laravel-form-builder\":.*\"1\.6.*\".*$/           "kris\/laravel-form-builder\": \"1\.\*\",/g'  $wdir/vendor/distilleries/form-builder/composer.json
+  sed -i 's/.*\"kris\/laravel-form-builder\":.*\"1\.6.*\".*$/           "kris\/laravel-form-builder\": \"1\.\*\",/g'  $wdir/vendor/composer/installed.json 
+  [ -d ./vendor ] && composer require kris/laravel-form-builder
+  [ -d ./vendor ] || require_insert $wdir  "kris\/laravel-form-builder" "1.*"
+  config_app_insert       $wdir "Kris\\\LaravelFormBuilder\\\FormBuilderServiceProvider::class"
+  config_app_alias_append $wdir "FormBuilder"    "Kris\\\LaravelFormBuilder\\\Facades\\\FormBuilder::class"
+  [ -f ./artisan ] && php artisan vendor:publish --provider="Kris\LaravelFormBuilder\FormBuilderServiceProvider"
+}
+
 laravel_debugbar(){
   print_color "https://github.com/barryvdh/laravel-debugbar"
   local wdir=$1
@@ -280,4 +295,83 @@ laravel_twig(){
   config_app_append       $wdir "TwigBridge\\\ServiceProvider::class"
   config_app_alias_append $wdir "Twig"  "TwigBridge\\\Facade\\\Twig::class"
   [ -f ./artisan ] && php artisan vendor:publish --provider="TwigBridge\ServiceProvider"
+}
+
+laravel_cashier(){
+   print_color "https://laravel.com/docs/5.3/billing"
+    local wdir=$1
+    cd $wdir || exit 1
+  require_insert $wdir    "laravel/cashier" "7.*"
+  require_insert $wdir "laravel/cashier-braintree" "2.*"
+  config_app_append       $wdir "Laravel\\\Cashier\\\CashierServiceProvider::class"
+  [ -d ./vendor ] && composer update
+  [ -f ./artisan ] && php artisan vendor:publish --provider="Laravel\Cashier\CashierServiceProvider"
+
+}
+
+laravel_passport(){
+  print_color "https://laravel.com/docs/5.3/passport"
+  local wdir=$1
+  cd $wdir || exit 1
+  config_app_append       $wdir "Laravel\\\Passport\\\PassportServiceProvider::class"
+  [ -d ./vendor ] && {
+           composer require laravel/passport  
+           composer update
+           php artisan migrate
+           php artisan passport:install
+           php artisan vendor:publish --tag=passport-components
+   }
+  [ -f ./artisan ] && php artisan vendor:publish --provider="Laravel\Cashier\CashierServiceProvider"
+
+}
+
+laravel_scout(){
+ print_color "https://laravel.com/docs/5.3/scout"
+  local wdir=$1
+  cd $wdir || exit 1
+  config_app_append       $wdir "Laravel\\\Scout\\\ScoutServiceProvider::class"
+  [ -d ./vendor ] && {
+           composer require laravel/scout
+           composer require algolia/algoliasearch-client-php
+   }
+  [ -f ./artisan ] && php artisan vendor:publish --provider="Laravel\Scout\ScoutServiceProvider"
+
+
+}
+
+laravel_socialite(){
+  print_color "https://github.com/laravel/socialite"
+  local wdir=$1
+  cd $wdir || exit 1
+  [ -d ./vendor ] && {
+        composer require  laravel/socialite
+  }
+  config_app_append       $wdir " Laravel\\\Socialite\\\SocialiteServiceProvider::class"
+  config_app_alias_append $wdir "Socialite" "Laravel\\\Socialite\\\Fayycades\\\Socialite::class"
+  [ -f ./artisan ] && php artisan vendor:publish --provider="Laravel\Socialite\SocialiteServiceProvider"
+
+
+}
+
+laravel_administrator(){
+  print_color "https://github.com/FrozenNode/Laravel-Administrator"
+  local wdir=$1
+  cd $wdir || exit 1
+  config_app_append       $wdir "Frozennode\\\Administrator\\\AdministratorServiceProvider::class"
+  [ -d ./vendor ] && {
+     composer require "frozennode/administrator: 5.*"
+   }
+  [ -f ./artisan ] && php artisan vendor:publish --provider="Frozennode\Administrator\AdministratorServiceProvider"
+}
+
+laravel_former(){
+  print_color "https://github.com/formers/former"
+    local wdir=$1
+  cd $wdir || exit 1
+  [ -d ./vendor ] && {
+    composer require anahkiasen/former 
+  }
+  config_app_append       $wdir "Former\\\FormerServiceProvider::class"
+  config_app_alias_append $wdir "Former" "Former\\\Facades\\\Former::class"
+  [ -f ./artisan ] && php artisan vendor:publish --provider="Former\FormerServiceProvider"
 }

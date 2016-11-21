@@ -74,6 +74,7 @@ config_app_alias_append(){
    }
    local tmp=`sed -n '/.*=>.*/h;${x;p}' $dir/config/app.php | awk -F'=>' '{print $1}'`
    local tmp2=`sed -n '/.*=>.*/h;${x;p}' $dir/config/app.php`  
+   local tmp2=$(backslash_db "$tmp2")
    sed -i "/$tmp/a \         '$alias' => $pkg" $dir/config/app.php
    [ "${tmp2:0-1}" != "," ] && sed -i "s/.*$tmp.*/$tmp2,/g" $dir/config/app.php
     return 1
