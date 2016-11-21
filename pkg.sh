@@ -1,6 +1,7 @@
 #!/bin/sh
 
 . ./include/help.sh
+. ./include/download.sh
 . ./include/jquery.sh
 
 
@@ -29,4 +30,6 @@ case $1 in
            echo "$pkg $2"
            $pkg $2
       done;;
+  *)  param_check $# 3 "$1 tdir ver rel"
+      $@ ;;
 esac
