@@ -79,17 +79,17 @@ APP_URL=http://localhost
 
 laravel_env_db(){
 
-local dbn=$1
+local dbn=$2
 [ -z "$dbn" ] && dbn="model"
-echo '
+echo "
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE="'$dbn'"
+DB_DATABASE=$dbn
 DB_USERNAME=root
 DB_PASSWORD=go3c86985773
-' >> $1
-
+" >> $1
+new_db $dbn root go3c86985773
 }
 
 laravel_env_queue(){

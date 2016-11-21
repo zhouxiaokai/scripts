@@ -2,6 +2,7 @@
 
 . ./include/help.sh
 . ./include/mysql.sh
+. ./include/db/mysql.sh
 . ./include/string.sh
 . ./include/go3c.sh
 . ./include/composer.sh
