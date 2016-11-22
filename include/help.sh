@@ -34,6 +34,12 @@ setdir(){
   [ -d $wdir/$sdir ] ||  mkdir -p $wdir/$sdir || exit 1
   return 0
 }
+
+get_php_ver(){
+  echo `php -v  | awk  "NR==1{ print $2}" | awk -F' ' '{print $2}'`
+
+}
+
 #http://blog.chinaunix.net/uid-26495963-id-3189345.html
 print_color(){
   echo -e "\033[1m  $1 \033[0m" 

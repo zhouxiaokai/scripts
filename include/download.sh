@@ -78,3 +78,20 @@ download_env_bin(){
   sudo tar -xzvf /tmp/$pkg -C $tdir && return 0
   return 1
 }
+
+
+download_env_src(){
+  local urls="http://www.go3c.tv:8040/download/devel/lnmp/src"
+  local tdir=$1
+  local pkg=$2
+  echo "`dirname $pkg`"
+  [ -d /tmp/`dirname $pkg` ] || mkdir -p /tmp/`dirname $pkg`
+  for url in $urls
+  do
+     wget -c $url/$pkg -O /tmp/$pkg && break
+  done
+  [ -d $tdir ] || exit 1
+  sudo tar -xzvf /tmp/$pkg -C $tdir && return 0
+  return 1
+}
+
