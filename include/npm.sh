@@ -10,6 +10,7 @@ env_inotify(){
 }
 
 env_libnotify(){
+  print_color "https://www.npmjs.com/package/node-notifier"
   print_color "https://github.com/GNOME/libnotify"
   sudo yum -y install libnotify.x86_64
   sudo yum -y install gtk-doc.noarch

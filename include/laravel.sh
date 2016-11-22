@@ -76,6 +76,12 @@ APP_URL=http://localhost
 ' > $1
 }
 
+laravel_disable_notify(){
+
+echo  "DISABLE_NOTIFIER=true" >> $1/.env 
+
+}
+
 
 laravel_env_db(){
 
@@ -374,4 +380,36 @@ laravel_former(){
   config_app_append       $wdir "Former\\\FormerServiceProvider::class"
   config_app_alias_append $wdir "Former" "Former\\\Facades\\\Former::class"
   [ -f ./artisan ] && php artisan vendor:publish --provider="Former\FormerServiceProvider"
+}
+
+laravel_settings(){
+  print_color "https://github.com/anlutro/laravel-settings"
+  local wdir=$1
+  cd $wdir || exit 1
+  [ -d ./vendor ] && {
+   composer require anlutro/l4-settings
+  }
+  config_app_insert $wdir "anlutro\\\LaravelSettings\\\ServiceProvider::class"
+  config_app_alias_insert $wdir "Setting" "anlutro\\\LaravelSettings\Facade::class"
+  [ -f ./artisan ] &&  {
+       php artisan vendor:publish
+       php artisan migrate
+ }
+}
+
+laravel_ide_helper(){
+  print_color "https://github.com/barryvdh/laravel-ide-helper"
+    local wdir=$1
+  cd $wdir || exit 1
+  [ -d ./vendor ] && {
+   composer require barryvdh/laravel-ide-helper
+   composer require doctrine/dbal
+  }
+  config_app_insert $wdir "Barryvdh\\\LaravelIdeHelper\\\IdeHelperServiceProvider::class"
+  [ -f ./artisan ] &&  {
+   php artisan clear-compiled
+   php artisan ide-helper:generate
+   php artisan vendor:publish 
+  }
+
 }

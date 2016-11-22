@@ -6,4 +6,5 @@
 . ./include/go3c.sh
 . ./include/download.sh
 . ./include/npm.sh
+. ./include/laravel_config.sh
 $@
