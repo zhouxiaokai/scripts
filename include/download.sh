@@ -12,7 +12,7 @@ download_zip_x()
 
   for url in $urls
   do 
-       wget $url/$spkg -O /tmp/$tpkg && break 
+       wget -c $url/$spkg -O /tmp/$tpkg && break 
   done
      
   unzip -x  /tmp/$tpkg -d $tdir      
@@ -29,7 +29,7 @@ urls="http://www.go3c.tv:8040/download/devel/env/ "
   [ -z "$url" ] || urls="$urls $url" 
   for url in $urls
   do
-       wget $url/$spkg -O /tmp/tmp.tgz  && break
+       wget -c $url/$spkg -O /tmp/tmp.tgz  && break
   done
   sudo tar -xzvf /tmp/tmp.tgz -C $tdir
   rm -rf /tmp/tmp.tgz
@@ -54,9 +54,27 @@ download_git(){
      for i in $pkgs
      do 
       print_color $url/$pkg/archive/$ver.zip
-      wget $url/$pkg/archive/$ver.zip -O /tmp/$pkg/master.zip || continue
-      unzip -x /tmp/$pkg/master.zip  &&  return 0
+      wget -c  $url/$pkg/archive/$ver.zip -O /tmp/$pkg/master.zip || continue
+      unzip -x /tmp/$pkg/master.zip  >/dev/null && {
+              print_color "Install ok"
+              return 0
+       } 
      done
  done
  return 0
+}
+
+download_env_bin(){
+  local urls="http://www.go3c.tv:8040/download/devel/lnmp/bin"
+  local tdir=$1
+  local pkg=$2
+  echo "`dirname $pkg`"
+  [ -d /tmp/`dirname $pkg` ] || mkdir -p /tmp/`dirname $pkg`
+  for url in $urls
+  do
+     wget -c $url/$pkg -O /tmp/$pkg && break
+  done
+  [ -d $tdir ] || exit 1
+  sudo tar -xzvf /tmp/$pkg -C $tdir && return 0
+  return 1
 }

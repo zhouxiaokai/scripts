@@ -219,8 +219,10 @@ laravel_revisionable(){
   cd $wdir
   print_color "https://github.com/VentureCraft/revisionable#display"
   grep  "venturecraft/revisionable" ./composer.json || sed -i '/"require":.*{/a       "venturecraft/revisionable": "1.*",' $wdir/composer.json
-  composer update
-  php artisan migrate --path=vendor/venturecraft/revisionable/src/migrations
+  [ -d ./vendor ] && {
+   composer update
+    php artisan migrate --path=vendor/venturecraft/revisionable/src/migrations
+  }
 }
 
 laravel_datatables(){
@@ -412,4 +414,31 @@ laravel_ide_helper(){
    php artisan vendor:publish 
   }
 
+}
+
+laravel_ardent(){
+  print_color "https://github.com/laravel-ardent/ardent"
+  local wdir=$1
+  cd $wdir || exit 1
+  [ -d ./vendor ] && {
+   composer require  laravelbook/ardent
+  }
+}
+
+laravel_logview(){
+  print_color "https://github.com/ARCANEDEV/LogViewer/blob/master/_docs/2.Installation-and-Setup.md"
+  local wdir=$1
+  cd $wdir || exit 1
+  require_insert $wdir    "arcanedev/log-viewer" "~4.0"
+  [ -d ./vendor ] && {
+   composer update
+  }
+  config_app_append $wdir "Arcanedev\\\LogViewer\\\LogViewerServiceProvider::class"
+  [ -f ./artisan ] &&  {
+   php artisan log-viewer:publish
+   php artisan log-viewer:publish --force
+   php artisan log-viewer:publish --tag=config
+   php artisan log-viewer:publish --tag=lang
+   php artisan log-viewer:check
+  }
 }
