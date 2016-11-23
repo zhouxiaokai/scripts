@@ -54,6 +54,25 @@ new_db()
    $MYSQL "$opstr"   
 }
 
+new_db_user(){
+   local host=$1
+   local port=$2
+   local dbname=$3
+   local username=$4
+   local passwdadmin=$5
+   local admin=$6
+   local passwd=$7
+
+   [ -z "username" ] &&  username="root"
+   [ -z $port ] && port="3306"
+   [ -z $host ] && host="127.0.0.1"
+
+   local MYSQL="mysql -h ${host} -P ${port} -u $admin -p${passwd} -e"
+   local opstr="create database IF NOT EXISTS ${dbname}; CREATE USER '$username'@'$host' IDENTIFIED BY '$passwdadmin';GRANT ALL PRIVILEGES ON * . * TO '$username'@'$host';"
+   echo "$MYSQL $opstr"
+   $MYSQL "$opstr"
+}
+
 upgrade(){
    /etc/init.d/mysqld stop
    /usr/local/mysql/bin/mysqld_safe --defaults-file=/etc/my.cnf --skip-grant-tables &

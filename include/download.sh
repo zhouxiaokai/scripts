@@ -91,7 +91,7 @@ download_env_src(){
      wget -c $url/$pkg -O /tmp/$pkg && break
   done
   [ -d $tdir ] || exit 1
-  sudo tar -xzvf /tmp/$pkg -C $tdir && return 0
+  tar -xzvf /tmp/$pkg -C $tdir && return 0
   return 1
 }
 

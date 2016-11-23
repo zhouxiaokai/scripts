@@ -4,6 +4,16 @@ php_src(){
   download_env_src /home/build/ php-$(get_php_ver).tar.gz
 }
 
+php_upgrade(){
+  local wdir=$1
+  [ -z "$wdir" ] && wdir="/home/build/"
+  [ -d $wdir/oneinstack ] || {
+     [ -f $wdir/oneinstack-full.tar.gz ] || download_env_src $wdir oneinstack-full.tar.gz
+     pushd $wdir
+  } 
+  pushd oneinstack
+  sudo ./upgrade.sh php 
+}
 
 php_ext_fileinfo(){
   echo "Download"

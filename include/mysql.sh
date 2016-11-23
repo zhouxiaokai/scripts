@@ -7,3 +7,5 @@ localhost_enable(){
 grep "^skip-name-resolve" /etc/my.cnf && sed -i 's|skip-name-resolve|#skip-name-resolve|g' /etc/my.cnf
 
 }
+
+
