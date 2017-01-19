@@ -38,7 +38,6 @@ git clone --depth=1 https://github.com/formers/former
 git clone --depth=1 https://github.com/JeffreyWay/Laravel-4-Generators
 git clone --depth=1 https://github.com/laracasts/Laravel-5-Generators-Extended
 git clone --depth=1 https://github.com/InfyOmLabs/laravel-generator #与metronic结合
-git clone --depth=1 https://github.com/formers/former
 git clone --depth=1 https://github.com/kristijanhusak/laravel-form-builder
 git clone --depth=1 https://github.com/Xethron/migrations-generator
 git clone --depth=1 https://github.com/barryvdh/laravel-migration-generator

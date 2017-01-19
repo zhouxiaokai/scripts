@@ -41,21 +41,23 @@ download_git(){
  local tdir=$1
  local pkg=$2
  local ver=$3
+ local TMP=$tdir/tmp
  [ -z $ver ] || local br="-b $3"
  #try git firstly
  cd $tdir  || exit 1
  print_color "$gurl/$pkg $br"
  #git clone --depth=1 $br $gurl/$pkg  && return 0
  #try download master.zip
- [ -d /tmp/$pkg ] || mkdir -p /tmp/$pkg 
- local pkgs="$ver.zip v$ver.zip"
+ [ -d $TMP/$pkg ] || mkdir -p $TMP/$pkg 
+ local pkgs="v$ver.zip $ver.zip"
  for url in $urls
  do
      for i in $pkgs
      do 
       print_color $url/$pkg/archive/$ver.zip
-      wget -c  $url/$pkg/archive/$ver.zip -O /tmp/$pkg/master.zip || continue
-      unzip -x /tmp/$pkg/master.zip  >/dev/null && {
+      wget -c  $url/$pkg/archive/$i -O $TMP/$pkg/master.zip || continue
+      print_color "Installing package"
+      unzip -x $TMP/$pkg/master.zip  >/dev/null && {
               print_color "Install ok"
               return 0
        } 

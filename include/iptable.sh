@@ -164,7 +164,7 @@ init(){
   iptables -P FORWARD DROP
   save
 }
-
+echo $@
 $@
 
 
